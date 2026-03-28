@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  title: Full Stack Assignment API
+  version: 1.0.0
+  description: API documentation for Auth and Tasks
+servers:
+  - url: http://localhost:5050/api/v1
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register User
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                role: { type: string, enum: ['user', 'admin'] }
+      responses:
+        '201':
+          description: Created successfully
+  /auth/login:
+    post:
+      summary: Login User
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Logged in successfully
+  /auth/me:
+    get:
+      summary: Get current authenticated user
+      tags: [Auth]
+      responses:
+        '200':
+          description: User object
+  /tasks:
+    get:
+      summary: Get tasks
+      tags: [Tasks]
+      responses:
+        '200':
+          description: List of tasks
+    post:
+      summary: Create task
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                status: { type: string, enum: ['pending', 'in-progress', 'completed'] }
+      responses:
+        '201':
+          description: Task created
+  /tasks/{id}:
+    put:
+      summary: Update task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                description: { type: string }
+                status: { type: string }
+      responses:
+        '200':
+          description: Task updated
+    delete:
+      summary: Delete task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Task deleted
